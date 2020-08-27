@@ -4,7 +4,7 @@ Biztime is a REST-ful backend API server for a simple company/invoice tracker.
 
 ## Endpoints:
 
-###Companies: 
+### Companies: 
 - GET /companies  
 
 	Returns list of companies, like:  
@@ -44,7 +44,7 @@ Edit existing company.
  Return obj of company:  
  {company: {code, name, description, invoices: [id, ...]}}
  
-###Invoices: 
+### Invoices: 
 - GET /invoices  
  
  Return info on invoices like:  
