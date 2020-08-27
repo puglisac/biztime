@@ -25,55 +25,58 @@ afterAll(async function() {
 describe("GET companies", () => {
     test("Get all companies", async() => {
         const res = await request(app).get("/companies");
-        expect(res.statusCode).toBe(200)
-        expect(res.body).toEqual({ companies: [testComp] })
-    })
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ companies: [testComp] });
+    });
 })
 
-// describe("GET /items/:name", () => {
-//     test("Get item by name", async() => {
-//         const res = await request(app).get(`/items/${bacon.name}`);
-//         expect(res.statusCode).toBe(200)
-//         expect(res.body).toEqual({ item: bacon })
-//     })
-//     test("Responds with 404 for invalid item", async() => {
-//         const res = await request(app).get(`/items/icecube`);
-//         expect(res.statusCode).toBe(404)
-//     })
-// })
+describe("GET /companies/:code", () => {
+    test("Get company by code", async() => {
+        const res = await request(app).get(`/companies/apple`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({
+            company: {
+                code: 'apple',
+                name: 'Apple Computer',
+                description: 'Maker of OSX.',
+                invoices: [expect.any(Object)]
+            }
+        });
+    });
+    test("Responds with 404 for invalid item", async() => {
+        const res = await request(app).get(`/companies/carlscomputers`);
+        expect(res.statusCode).toBe(404);
+    });
+});
 
-// describe("POST /items", () => {
-//     test("Creating an item", async() => {
-//         const res = await request(app).post("/items").send({ name: "beef", price: 3.99 });
-//         expect(res.statusCode).toBe(201);
-//         expect(res.body).toEqual({ item: { name: "beef", price: 3.99 } });
-//     })
-//     test("Responds with 400 if name is missing", async() => {
-//         const res = await request(app).post("/items").send({});
-//         expect(res.statusCode).toBe(400);
-//     })
-// })
+describe("POST /companies", () => {
+    test("Creating a company", async() => {
+        const res = await request(app).post("/companies").send({ code: "newComp", name: "My Company", description: "The best company ever!!" });
+        expect(res.statusCode).toBe(201);
+        expect(res.body).toEqual({ company: { code: "newComp", name: "My Company", description: "The best company ever!!" } });
+    });
+});
 
-// describe("/PATCH /items/:name", () => {
-//     test("Updating an item", async() => {
-//         const res = await request(app).patch(`/items/${bacon.name}`).send({ name: "chili", price: 2.99 });
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toEqual({ updated: { name: "chili", price: 2.99 } });
-//     })
-//     test("Responds with 404 for invalid name", async() => {
-//         const res = await request(app).patch(`/items/Piggles`).send({ name: "chili", price: 2.99 });
-//         expect(res.statusCode).toBe(404);
-//     })
-// })
+describe("/PATCH /companies/:code", () => {
+    test("Updating an existing company", async() => {
+        const res = await request(app).put(`/companies/apple`).send({ name: "new name", description: "new description" });
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ company: { code: "apple", name: "new name", description: "new description" } });
+    })
+    test("Responds with 404 for invalid name", async() => {
+        const res = await request(app).put(`/companies/bobsburgers`).send({ name: "new name", description: "new description" });
+        expect(res.statusCode).toBe(404);
+    });
+});
 
-// describe("/DELETE /items/:name", () => {
-//     test("Deleting an item", async() => {
-//         const res = await request(app).delete(`/items/${bacon.name}`);
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toEqual({ message: 'Deleted' })
-//     })
-//     test("Responds with 404 for deleting invalid item", async() => {
-//         const res = await request(app).delete(`/items/hamface`);
-//         expect(res.statusCode).toBe(404);
-//     })
-// })
+describe("/DELETE /companies/:code", () => {
+    test("Deleting an item", async() => {
+        const res = await request(app).delete(`/companies/apple`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual({ status: 'Deleted' });
+    })
+    test("Responds with 404 for deleting invalid item", async() => {
+        const res = await request(app).delete(`/companies/toysrus`);
+        expect(res.statusCode).toBe(404);
+    });
+});

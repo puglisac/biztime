@@ -17,7 +17,7 @@ router.post("/", async function(req, res, next) {
         const { comp_code, amt } = req.body;
         const result = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING id, comp_code, amt, paid, add_date, paid_date `, [comp_code, amt]);
 
-        return res.status(201).json({ invoices: result.rows[0] });
+        return res.status(201).json({ invoice: result.rows[0] });
     } catch (e) {
         return next(e)
     }
@@ -52,13 +52,17 @@ router.get("/:id", async function(req, res, next) {
 router.put("/:id", async function(req, res, next) {
     try {
         const id = req.params.id;
-        const { amt } = req.body;
-        console.log(amt)
-        const result = await db.query(`UPDATE invoices SET amt=$2 WHERE id=$1 RETURNING *`, [id, amt]);
+        const { amt, paid } = req.body;
+        let result;
+        if (paid) {
+            result = await db.query(`UPDATE invoices SET amt=$2, paid=$3, paid_date=CURRENT_DATE WHERE id=$1 RETURNING *`, [id, amt, paid]);
+        } else {
+            result = await db.query(`UPDATE invoices SET amt=$2, paid=$3, paid_date=null WHERE id=$1 RETURNING *`, [id, amt, paid]);
+        }
         if (result.rows.length == 0) {
             throw new ExpressError("Invoice not found", 404);
         }
-        return res.json({ company: result.rows[0] });
+        return res.json({ invoice: result.rows[0] });
     } catch (e) {
         return next(e)
     }
@@ -71,7 +75,7 @@ router.delete("/:id", async function(req, res, next) {
         if (result.rowCount == 0) {
             throw new ExpressError("Company not found", 404);
         }
-        return res.json({ message: 'Deleted' });
+        return res.json({ status: 'Deleted' });
     } catch (e) {
         return next(e)
     }

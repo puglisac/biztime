@@ -26,7 +26,7 @@ router.post("/", async function(req, res, next) {
 router.get("/:code", async function(req, res, next) {
     try {
         const code = req.params.code
-        const result = await db.query(`SELECT * FROM companies JOIN invoices ON invoices.comp_code=companies.code WHERE code=$1`, [code]);
+        const result = await db.query(`SELECT * FROM companies LEFT JOIN invoices ON invoices.comp_code=companies.code WHERE code=$1`, [code]);
         if (result.rows.length == 0) {
             throw new ExpressError("Company not found", 404);
         }
@@ -65,7 +65,7 @@ router.delete("/:code", async function(req, res, next) {
         if (result.rowCount == 0) {
             throw new ExpressError("Company not found", 404);
         }
-        return res.json({ message: 'Deleted' });
+        return res.json({ status: 'Deleted' });
     } catch (e) {
         return next(e)
     }
