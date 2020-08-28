@@ -69,7 +69,7 @@ Adds an invoice.
 
  Updates an invoice.  
 
- Needs to be passed in a JSON body of {amt}
+ Needs to be passed in a JSON body of {amt, paid}
 
  Returns:  
  {invoice: {id, comp_code, amt, paid, add_date, paid_date}}
@@ -85,6 +85,5 @@ Adds an invoice.
 ## Built Using:
 
 NodeJS - backend  
-PostgreSQL - database  
-Node-pg - ORM for database  
+PostgreSQL - database    
 Jest - testing
